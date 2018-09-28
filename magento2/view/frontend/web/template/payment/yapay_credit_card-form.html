@@ -1,0 +1,169 @@
+<fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'payment_form_' + getCode()}">
+    <legend class="legend">
+        <span><!-- ko i18n: 'Credit Card Information'--><!-- /ko --></span>
+    </legend><br />
+
+    <div class="field number required">
+        <div class="control">
+            <ul class="credit-card-types">
+                <!-- ko foreach: {data: getCcAvailableTypesValues(), as: 'item'} -->
+                <li class="item" data-bind="css: {
+                                                 _active: $parent.selectedCardType() == item.card,
+                                                 _inactive: $parent.selectedCardType() != null && $parent.selectedCardType() != item.card
+                                                 } ">
+                    <!--ko if: $parent.getIcons(item.card) -->
+                    <img data-bind="attr: {
+								'src': $parent.getIcons(item.card).url,
+								'width': '58',
+								'height': '37'
+								}">
+                    <!--/ko-->
+                </li>
+                <!--/ko-->
+            </ul>
+            <input type="hidden"
+                   name="payment[cc_payment_id]"
+                   class="input-text"
+                   value=""
+                   data-bind="attr: {id: getCode() + '_cc_type', 'data-container': getCode() + '-cc-type'},
+						   value:creditCardPaymentId
+						   ">
+        </div>
+    </div>
+
+    <div class="field number required">
+        <label data-bind="attr: {for: getCode() + '_cc_number'}" class="label">
+            <span><!-- ko i18n: 'Número do cartão de crédito'--><!-- /ko --></span>
+        </label>
+        <div class="control">
+            <input type="number" name="payment[cc_number]" class="input-text" value=""
+                   data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_cc_number',
+                                    title: $t('Credit Card Number'),
+                                    'data-container': getCode() + '-cc-number',
+                                    'data-validate': JSON.stringify({required:true, 'validate-card-type-yapay':getCcAvailableTypesValues()})},
+                              enable: isActive($parents),
+                              value: creditCardNumber,
+                              valueUpdate: 'keyup' "/>
+        </div>
+    </div>
+    <div class="field date required" data-bind="attr: {id: getCode() + '_cc_type_exp_div'}">
+        <label data-bind="attr: {for: getCode() + '_expiration'}" class="label">
+            <span><!-- ko i18n: 'Data de validade'--><!-- /ko --></span>
+        </label>
+        <div class="control">
+            <div class="fields group group-2">
+                <div class="field no-label month">
+                    <div class="control">
+                        <select  name="payment[cc_exp_month]"
+                                 class="select select-month"
+                                 data-bind="attr: {id: getCode() + '_expiration', 'data-container': getCode() + '-cc-month', 'data-validate': JSON.stringify({required:true, 'validate-cc-exp':'#' + getCode() + '_expiration_yr'})},
+                                            enable: isActive($parents),
+                                            options: getCcMonthsValues(),
+                                            optionsValue: 'value',
+                                            optionsText: 'month',
+                                            optionsCaption: $t('Mês'),
+                                            value: creditCardExpMonth">
+                        </select>
+                    </div>
+                </div>
+                <div class="field no-label year">
+                    <div class="control">
+                        <select name="payment[cc_exp_year]"
+                                class="select select-year"
+                                data-bind="attr: {id: getCode() + '_expiration_yr', 'data-container': getCode() + '-cc-year', 'data-validate': JSON.stringify({required:true})},
+                                           enable: isActive($parents),
+                                           options: getCcYearsValues(),
+                                           optionsValue: 'value',
+                                           optionsText: 'year',
+                                           optionsCaption: $t('Ano'),
+                                           value: creditCardExpYear">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="field text required">
+        <label data-bind="attr: {for: getCode() + '_cc_cardholder'}" class="label">
+            <span><!-- ko i18n: 'Portador do cartão'--><!-- /ko --></span>
+        </label>
+        <div class="control">
+            <input type="text" name="payment[cc_cardholder]" class="input-text" value=""
+                   data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + '_cc_cardholder',
+                                    title: $t('Cardholder'),
+                                    'data-container': getCode() + '-cc-cardholder',
+                                    'data-validate': JSON.stringify({required:true})},
+                              enable: isActive($parents),
+                              value: creditCardholder,
+                              valueUpdate: 'keyup' "/>
+        </div>
+    </div>
+    <div class="field number required validate-cc-cvn validate-length maximum-length-3 minimum-length-3 validate-digits">
+        <label data-bind="attr: {for: getCode() + '_cc_security_code'}" class="label">
+            <span><!-- ko i18n: 'Código de segurança do cartão'--><!-- /ko --></span>
+        </label>
+        <div class="control">
+            <input type="number" name="payment[cc_security_code]" class="input-text" value=""
+                   data-bind="attr: {
+                                    autocomplete: off,
+                                    id: getCode() + 'cc_security_code',
+                                    title: $t('Credit Card Security Code'),
+                                    'data-container': getCode() + '-cc-security_code',
+                                    'data-validate': JSON.stringify({required:true})},
+                              enable: isActive($parents),
+                              value: creditCardSecurityCode
+                              valueUpdate: 'keyup' "/>
+        </div>
+    </div>
+    <div class="field number required">
+        <label data-bind="attr: {for: getCode() + '_cc_installments'}" class="label">
+            <span><!-- ko i18n: 'Parcelas'--><!-- /ko --></span>
+        </label>
+        <div class="control">
+            <select name="payment[cc_installments]" class="select"
+                   data-bind="attr: {
+                                    id: getCode() + 'cc_installments',
+                                    title: $t('Installments'),
+                                    'data-container': getCode() + '-cc_installments'},
+                                    enable: isActiveSplit($parents),
+                                    options: getInstallmentsValues(),
+                                    optionsValue: 'value',
+                                    optionsText: 'installment',
+                                    value: creditCardInstallments">
+            </select>
+        </div>
+    </div>
+    <br>
+    <br>
+    <!-- ko if: (hasVerification())-->
+    <div class="field cvv required" data-bind="attr: {id: getCode() + '_cc_type_cvv_div'}">
+        <label data-bind="attr: {for: getCode() + '_cc_cid'}" class="label">
+            <span><!-- ko i18n: 'Número de verificação do cartão'--><!-- /ko --></span>
+        </label>
+        <div class="control _with-tooltip">
+            <input type="number"
+                   autocomplete="off"
+                   class="input-text cvv"
+                   name="payment[cc_cid]"
+                   value=""
+                   data-bind="attr: {id: getCode() + '_cc_cid',
+                        title: $t('Card Verification Number'),
+                        'data-container': getCode() + '-cc-cvv'},
+                        enable: isActive($parents),
+                        value: creditCardVerificationNumber" />
+            <div class="field-tooltip toggle">
+                <span class="field-tooltip-action action-cvv"
+                      tabindex="0"
+                      data-toggle="dropdown"
+                      data-bind="attr: {title: $t('What is this?')}, mageInit: {'dropdown':{'activeClass': '_active'}}">
+                    <span><!-- ko i18n: 'What is this?'--><!-- /ko --></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- /ko -->
+</fieldset>

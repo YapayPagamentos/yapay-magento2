@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <modules>
+            <Yapay_Magento2>
+                <version>1.0.1</version>
+            </Yapay_Magento2>
+        </modules>
+        <payment>
+            <yapay_credit_card>
+                <title>Yapay Intermediador - Cartão de Crédito</title>
+                <order_status>pending_payment</order_status>
+                <instructions>Instruction.</instructions>
+                <payment_action>true</payment_action>
+                <active>0</active>
+                <parcel_interest_1>0.00</parcel_interest_1>
+                <parcel_interest_2>0.00</parcel_interest_2>
+                <parcel_interest_3>0.00</parcel_interest_3>
+                <parcel_interest_4>0.00</parcel_interest_4>
+                <parcel_interest_5>0.00</parcel_interest_5>
+                <parcel_interest_6>0.00</parcel_interest_6>
+                <parcel_interest_7>0.00</parcel_interest_7>
+                <parcel_interest_8>0.00</parcel_interest_8>
+                <parcel_interest_9>0.00</parcel_interest_9>
+                <parcel_interest_10>0.00</parcel_interest_10>
+                <parcel_interest_11>0.00</parcel_interest_11>
+                <parcel_interest_12>0.00</parcel_interest_12>
+                <model>Yapay\Magento2\Model\Payment\CreditCardYapay</model>
+                <group>offline</group>
+
+            </yapay_credit_card>
+            <yapay_bank_slip>
+                <title>Yapay Intermediador - Boleto</title>
+                <order_status>pending_payment</order_status>
+                <instructions>Instruction.</instructions>
+                <payment_action>true</payment_action>
+                <active>0</active>
+                <model>Yapay\Magento2\Model\Payment\BankSlipYapay</model>
+                <group>offline</group>
+            </yapay_bank_slip>
+            <yapay_transference>
+                <order_status>pending_payment</order_status>
+                <payment_action>true</payment_action>
+                <title>Yapay Intermediador - Transferência Online</title>
+                <active>0</active>
+                <model>Yapay\Magento2\Model\Payment\TransferenceYapay</model>
+                <group>offline</group>
+            </yapay_transference>
+        </payment>
+    </default>
+</config>
