@@ -4,13 +4,15 @@
 
 ### Versões Compativeis:
 
-	- [x] 2.0.x
-	- [x] 2.1.x
-	- [x] 2.2.x
+- [x] 2.0.x
+- [x] 2.1.x
+- [x] 2.2.x
 
 ### Instalação do Módulo Yapay:
 
 - Realize o download do módulo e siga os seguintes passos de acordo com a forma que sua loja foi instalada:
+
+####[Yapay-Magento 2](https://github.com/YapayPagamentos/yapay-magento2.git)
 
 
 ### Instalar usando o Composer
