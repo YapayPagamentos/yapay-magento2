@@ -309,7 +309,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         $response = json_decode($paymentApi->generatePayment($payment));
         
         $paymentData->setAdditionalInformation("url_payment", $response->data_response->transaction->payment->url_payment);
-
+        $paymentData->setAdditionalInformation("boleto_url", $response->data_response->transaction->payment->url_payment);
         $paymentData->setTransactionId(
             $response->data_response->transaction->order_number
         )->setIsTransactionClosed(0);
