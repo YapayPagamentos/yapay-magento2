@@ -38,5 +38,56 @@
 
 ## Configuração
 
+### Configuração
+
+Acesse no Painel Administrativo do Magento No menu lateral clique em  {+ Store +} na sequencia no sub-menu {+ Sales +} clique em {+ Payment Methods +}. Será carregada a tela para configurar os meios de pagamentos do site. 
+
+![FOTO 1](img/yapay_dashboard_magento.png)
+
+
+### Como habilitar a Yapay no seu site
+
+No primeiro bloco de informação, estão as informações de configuração da sua conta Yapay. 
+
+- Ambiente
+	- [x] Seleciona qual versão de ambiente da Yapay que o site estará apontando. Os ambientes disponíveis são: ```Sandbox``` e ```Produção```.
+	
+- Token
+	- [x] Chave de integração da conta Yapay. Os tokens de produção e sandbox são distintos.
+	- [x] O token da conta é gerado após cadsatro da conta
+
+- E-mail
+	- [x] E-mail utilizado para criação da conta Yapay. 	
+
+	
+![FOTO 2](img/yapay_config.png)
+
+### Configurando os meios de pagamentos
+
+#### Cartão de Crédito
+
+- Ativo
+
+- Métodos de pagamento disponíveis
+
+- Número máximo de parcelas
+
+![FOTO 3](img/yapay_ccred.png)
+
+#### Transferência Online
+
+- Ativo
+
+- Métodos de pagamento disponíveis
+
+![FOTO 4](img/yapay_tef.png)
+
+#### Boleto Bancário
+
+- Ativo
+
+- [] Métodos de pagamento disponíveis
+
+![FOTO 5](img/yapay_bol.png)
 
 
