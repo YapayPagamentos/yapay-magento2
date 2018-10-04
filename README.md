@@ -86,7 +86,7 @@ No primeiro bloco de informação, estão as informações de configuração da 
 
 - Ativo
 
-- [] Métodos de pagamento disponíveis
+- Métodos de pagamento disponíveis
 
 ![FOTO 5](img/yapay_bol.png)
 
