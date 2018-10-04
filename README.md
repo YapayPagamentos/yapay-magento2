@@ -41,7 +41,7 @@
 
 ### Configuração
 
-Acesse no Painel Administrativo do Magento No menu lateral clique em  {+ Store +} na sequencia no sub-menu {+ Sales +} clique em {+ Payment Methods +}. Será carregada a tela para configurar os meios de pagamentos do site. 
+Acesse no Painel Administrativo do Magento No menu lateral clique em  `Store` na sequencia no sub-menu `Sales` clique em `Payment Methods`. Será carregada a tela para configurar os meios de pagamentos do site. 
 
 ![FOTO 1](img/yapay_dashboard_magento.png)
 
