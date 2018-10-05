@@ -35,7 +35,9 @@ class CreditCardYapay extends PaymentAbstract
         $helper->validateCreditCard($data->getData());
 
         foreach($currentData as $key=>$value){
-            $infoInstance->setAdditionalInformation($key,$value);
+            if (strval($key) != 'extension_attributes') {
+                $infoInstance->setAdditionalInformation($key, $value);
+            }
         }
         return $this;
 

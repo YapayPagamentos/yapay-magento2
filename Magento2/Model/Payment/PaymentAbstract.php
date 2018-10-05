@@ -49,7 +49,9 @@ abstract class PaymentAbstract extends \Magento\Payment\Model\Method\AbstractMet
         $currentData = $data->getAdditionalData();
 
         foreach ($currentData as $key => $value) {
-            $infoInstance->setAdditionalInformation($key, $value);
+            if (strval($key) != 'extension_attributes') {
+                $infoInstance->setAdditionalInformation($key, $value);
+            }
         }
         return $this;
     }
@@ -62,20 +64,13 @@ abstract class PaymentAbstract extends \Magento\Payment\Model\Method\AbstractMet
      */
     public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
-
         if (is_null($payment->getParentTransactionId())) {
-
             $this->_logger->debug(json_encode($this->getConfigData('payment_action')));
             $this->authorize($payment, $amount);
         }
-
-
         $payment->setIsTransactionPending(true);
-
-
         return $this;
     }
-
     /**
      * @param \Magento\Payment\Model\InfoInterface $payment
      * @param float $amount
@@ -87,14 +82,11 @@ abstract class PaymentAbstract extends \Magento\Payment\Model\Method\AbstractMet
         if ($amount <= 0) {
             throw new LocalizedException(__('Invalid amount for authorization.'));
         }
-
         $objectManager = ObjectManager::getInstance();
         $helper = $objectManager->get(YapayData::class);
         $helper->generateTransaction($payment);
-
         return false;
     }
-
     /**
      * Metodo proprio do magento que busca configurações de pagameno no modulo do magento
      *
@@ -104,11 +96,9 @@ abstract class PaymentAbstract extends \Magento\Payment\Model\Method\AbstractMet
     {
         return self::ACTION_AUTHORIZE_CAPTURE;
     }
-
+    
     public function order(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
         $this->_logger->debug(json_encode('oi order'));
     }
-
-
 }

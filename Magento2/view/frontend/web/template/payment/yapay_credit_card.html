@@ -18,6 +18,12 @@
         <form class="form" id="yapay_credit_card-form" action="#" name="yapay_credit_card-form" method="post" >
             <!-- ko template: 'Yapay_Magento2/payment/yapay_credit_card-form' --><!-- /ko -->
         </form>
+
+        <div class="checkout-agreements-block">
+            <!-- ko foreach: $parent.getRegion('before-place-order') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
         <div class="actions-toolbar">
             <div class="primary">
                 <button class="action primary checkout"
