@@ -43,7 +43,7 @@
 
 Acesse no Painel Administrativo do Magento No menu lateral clique em  `Store` na sequencia no sub-menu `Sales` clique em `Payment Methods`. Será carregada a tela para configurar os meios de pagamentos do site. 
 
-![FOTO 1](img/yapay_dashboard_magento.png)
+![FOTO 1](https://github.com/YapayPagamentos/yapay-magento2/blob/master/img/yapay_dashboard_magento.png)
 
 
 ### Como habilitar a Yapay no seu site
@@ -61,7 +61,7 @@ No primeiro bloco de informação, estão as informações de configuração da 
 	- [x] E-mail utilizado para criação da conta Yapay. 	
 
 	
-![FOTO 2](img/yapay_config.png)
+![FOTO 2](https://github.com/YapayPagamentos/yapay-magento2/blob/master/img/yapay_config.png)
 
 ### Configurando os meios de pagamentos
 
@@ -73,7 +73,7 @@ No primeiro bloco de informação, estão as informações de configuração da 
 
 - Número máximo de parcelas
 
-![FOTO 3](img/yapay_ccred.png)
+![FOTO 3](https://github.com/YapayPagamentos/yapay-magento2/blob/master/img/yapay_ccred.png)
 
 #### Transferência Online
 
@@ -81,7 +81,7 @@ No primeiro bloco de informação, estão as informações de configuração da 
 
 - Métodos de pagamento disponíveis
 
-![FOTO 4](img/yapay_tef.png)
+![FOTO 4](https://github.com/YapayPagamentos/yapay-magento2/blob/master/img/yapay_tef.png)
 
 #### Boleto Bancário
 
@@ -89,6 +89,6 @@ No primeiro bloco de informação, estão as informações de configuração da 
 
 - Métodos de pagamento disponíveis
 
-![FOTO 5](img/yapay_bol.png)
+![FOTO 5](https://github.com/YapayPagamentos/yapay-magento2/blob/master/img/yapay_bol.png)
 
 
