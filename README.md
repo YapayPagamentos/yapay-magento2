@@ -55,7 +55,7 @@ No primeiro bloco de informação, estão as informações de configuração da 
 	
 - Token
 	- [x] Chave de integração da conta Yapay. Os tokens de produção e sandbox são distintos.
-	- [x] O token da conta é gerado após cadsatro da conta
+	- [x] O token da conta é gerado após cadastro da conta
 
 - E-mail
 	- [x] E-mail utilizado para criação da conta Yapay. 	
