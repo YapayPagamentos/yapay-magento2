@@ -8,7 +8,9 @@
 - [x] 2.1.x
 - [x] 2.2.x
 
-> Requer php7
+### Pré requisito:
+
+- Requer a que o PHP esteja no mínimo na versão 7.0.2.
 
 ### Instalação do Módulo Yapay:
 
