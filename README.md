@@ -8,6 +8,7 @@
 - [x] 2.1.x
 - [x] 2.2.x
 
+> Requer php7
 
 ### Instalação do Módulo Yapay:
 
