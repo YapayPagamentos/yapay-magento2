@@ -18,11 +18,11 @@ class PaymentApi
      * @param $payment
      * @return mixed
      */
-    public function generatePayment($payment)
+    public function generatePayment($payment, $url)
     {
         $data_string = json_encode($payment);
 
-        $ch = curl_init('https://api.intermediador.sandbox.yapay.com.br/api/v3/transactions/payment');
+        $ch = curl_init($url.'/api/v3/transactions/payment');
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
@@ -31,7 +31,6 @@ class PaymentApi
         curl_setopt ( $ch, CURLOPT_POST, 1 );
         curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payment));
-
 
         $result = curl_exec($ch);
 
