@@ -42,23 +42,17 @@ class PaymentApi
      * @param $transactionToken
      * @return mixed
      */
-    public function getTransactionByTransactionToken($transactionToken) {
-
+    public function getTransactionByTransactionToken($transactionToken, $url_environment)
+    {
         $objectManager = ObjectManager::getInstance();
-
         $helper = $objectManager->get(YapayData::class);
-
-        $url = 'https://api.intermediador.sandbox.yapay.com.br/api/v3/transactions/get_by_token?token_account='.$helper->getToken().'&token_transaction='.$transactionToken.'';
+        $url = $url_environment.'api/v3/transactions/get_by_token?token_account='.$helper->getToken().'&token_transaction='.$transactionToken.'';
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-
-
         curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
 
         $result = curl_exec($ch);
-
+        
         return $result;
     }
-
-
 }

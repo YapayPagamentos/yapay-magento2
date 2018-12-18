@@ -187,6 +187,18 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         $result = array_search($stateName, $brazilianStates);
         return $result;
     }
+
+    public function getCheckoutCompany($customerCheckout, $billingAddress) {
+        if($customerCheckout['cnpj'] != '' || $customerCheckout['cnpj'] != null) {
+            return [
+                'cnpj'  => $customerCheckout['cnpj'],
+                'company_name' => $billingAddress->getCompany(),
+                'trade_name' => $billingAddress->getCompany()
+            ];
+        }
+        return false;
+    }
+
     /**
      * Gera os dados do cliente
      *
@@ -209,13 +221,10 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
             $customerCheckout = $this->getCheckoutVisitant($paymentData);
         }
 
-        return [
+        $customerData =  [
             'name'  => $customerCheckout['name'],
             'email' => $customerCheckout['email'],
             'cpf'   => $customerCheckout['cpf'],
-            'cnpj'  => $customerCheckout['cnpj'],
-            'company_name' => 'Não informado',
-            'trade_name' =>'Não informado',
             'contacts' => [
                 [
                     'number_contact' => $customerCheckout['contacts'][0]['number_contact'],
@@ -226,17 +235,23 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
                 [
                     'type_address' => self::TYPE_ADDRESS,
                     'street' => $street[0],
-                    'number' => 'Não informado',
+                    'number' => $street[1] ?? 'Não informado',
                     'city' => $order->getBillingAddress()->getCity(),
                     'state' => $order->getBillingAddress()->getRegion(),
                     'neighborhood' => $paymentData->getData('additional_information')['neighborhoodCustomer'],
                     'state' => $state,
-                    'neighborhood' => $street[1] ?? 'Não informado',
-                    'completion' => $street[2] ?? '',
+                    'completion' => $street[2] ?? 'Não informado',
+                    'neighborhood' => $street[3] ?? 'Não informado',
                     'postal_code' => $order->getBillingAddress()->getPostcode()
                 ]
             ]
         ];
+
+        if ($this->getCheckoutCompany($customerCheckout, $order->getBillingAddress()) != false) {
+            return array_merge($customerData, $this->getCheckoutCompany($customerCheckout, $order->getBillingAddress()));
+        }
+
+        return $customerData;
     }
 
     /**
@@ -277,7 +292,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_API_v" . $this->getVersionModule();
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
         $paymentInfo = $paymentData->getData('additional_information');
 
@@ -306,7 +321,11 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         $paymentApi = $objectManager->get(PaymentApi::class);
         $response = json_decode($paymentApi->generatePayment($payment, $this->getBaseURL()));
-        
+
+        \Magento\Framework\App\ObjectManager::getInstance()
+            ->get('Psr\Log\LoggerInterface')
+            ->debug(json_encode( $response));
+
         $paymentData->setAdditionalInformation("url_payment", $response->data_response->transaction->payment->url_payment);
         $paymentData->setAdditionalInformation("boleto_url", $response->data_response->transaction->payment->url_payment);
         $paymentData->setTransactionId(

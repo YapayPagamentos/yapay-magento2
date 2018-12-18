@@ -11,6 +11,8 @@ use Magento\Sales\Model\Order\Payment\TransactionFactory;
 use \Magento\Sales\Model\ResourceModel\Order\Payment\Transaction;
 use Yapay\Magento2\Helper\YapayData;
 use Yapay\Magento2\Api\PaymentApi;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Capture extends Action
 {
@@ -22,6 +24,8 @@ class Capture extends Action
     const STATUS_MONITORING = 87;
     const STATUS_RECOVER = 88;
     const STATUS_REPROVED = 89;
+    const URL_SANDBOX = "https://api.intermediador.sandbox.yapay.com.br/";
+    const URL_PRODUCTION = "https://api.intermediador.yapay.com.br/";
 
     /**
      * @var YapayData
@@ -66,7 +70,7 @@ class Capture extends Action
             return false;
         }
 
-        $response = json_decode($this->paymentApi->getTransactionByTransactionToken($tokenTransaction));
+        $response = json_decode($this->paymentApi->getTransactionByTransactionToken($tokenTransaction, $this->getBaseURL()));
 
         $transaction = $response->data_response->transaction;
         $transactionId = $transaction->transaction_id;
@@ -177,5 +181,21 @@ class Capture extends Action
 
             $invoice->save();
         }
+    }
+
+    public function getBaseURL()
+    {
+        if ($this->getEnvironment() == 'production') {
+            return self::URL_PRODUCTION;
+        }
+        return self::URL_SANDBOX;
+    }
+
+    public function getEnvironment()
+    {
+        $objectManager = ObjectManager::getInstance();
+        $scopeConfig = $objectManager->get(ScopeConfigInterface::class);
+        $environment = $scopeConfig->getValue('payment/yapay_configuration/environment_configuration_yapay', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $environment;
     }
 }
