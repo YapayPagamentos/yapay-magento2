@@ -165,20 +165,13 @@ class CreditCardProvider implements ConfigProviderInterface
      */
     public function interestInstallments()
     {
-        return [
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_1'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_2'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_3'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_4'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_5'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_6'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_7'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_8'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_9'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_10'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_11'),
-            $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_12')
-        ];
+        $installmentsInterest = [];
+
+        for($i=1; $i <= $this->Installment(); $i++) {
+            array_push($installmentsInterest, $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_'.$i ));
+        };
+    
+        return $installmentsInterest;
     }
 
 
