@@ -94,6 +94,12 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         $order = $paymentData->getOrder();
         $checkCpfAndCnpj = $this->checkCpfAndCnpj($paymentData->getData('additional_information')['cpfCustomer'] , $paymentData->getData('additional_information')['cnpjCustomer'] );
 
+        $number_contact = str_replace(" ","",$order->getBillingAddress()->getData('telephone'));
+        $number_contact = str_replace("(","",$number_contact);
+        $number_contact = str_replace(")","",$number_contact);
+        $number_contact = str_replace("-","",$number_contact);
+
+
 
         $customerCheckout =
             [
@@ -101,15 +107,16 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
                 'email' => $order->getBillingAddress()->getData('email'),
                 'cpf' =>  $checkCpfAndCnpj[0],
                 'cnpj' => $checkCpfAndCnpj[1] ?? "",
-                'company_name' => 'Não informado',
-                'trade_name' =>'Não informado',
+                'company_name' => 'Não Informado',
+                'trade_name' => 'Não Informado',
                 'contacts' => [
                     [
-                        'number_contact' => $order->getBillingAddress()->getData('telephone'),
+                        'number_contact' => ltrim($number_contact, 0),
                         'type_contact' => 'H',
                     ]
                 ]
             ];
+
         return $customerCheckout;
     }
 
@@ -133,24 +140,28 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         $checkCpfAndCnpj = $this->checkCpfAndCnpj($customerSession->getCustomer()->getData('cpf'), $customerSession->getCustomer()->getData('cnpj'));
 
+        $number_contact = str_replace(" ","",$customer->getCustomAttribute(self::ATTR_PHONE_KEY)->getValue());
+        $number_contact = str_replace("(","",$number_contact);
+        $number_contact = str_replace(")","",$number_contact);
+        $number_contact = str_replace("-","",$number_contact);
+
         $customerCheckout =
             [
                 'name' => $order->getCustomerFirstname() . ' ' . $order->getCustomerLastname(),
                 'email' => $order->getCustomerEmail(),
                 'cpf' =>  $checkCpfAndCnpj[0],
                 'cnpj' => $checkCpfAndCnpj[1] ?? "",
-                'company_name' => 'Não informado',
-                'trade_name' =>'Não informado',
+                'company_name' => 'Não Informado',
+                'trade_name' => 'Não Informado',
                 'contacts' => [
                     [
-                        'number_contact' => $customer->getCustomAttribute(self::ATTR_PHONE_KEY)->getValue(),
+                        'number_contact' => ltrim($number_contact, 0),
                         'type_contact' => $this->getTypeContact($customer->getCustomAttribute(self::ATTR_PHONE_KEY)->getValue()),
                     ]
                 ]
             ];
-        
-        return $customerCheckout;
 
+        return $customerCheckout;
     }
 
     function checkStates($stateName)
@@ -193,8 +204,8 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
             return [
                 'cnpj'  => $customerCheckout['cnpj'],
                 'company_name' => $billingAddress->getCompany(),
-                'trade_name' => $billingAddress->getCompany()
-            ];
+                'trade_name' => $billingAddress->getCompany(),        
+            ];             
         }
         return false;
     }
@@ -221,13 +232,18 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
             $customerCheckout = $this->getCheckoutVisitant($paymentData);
         }
 
+        $number_contact = str_replace(" ","",$customerCheckout['contacts'][0]['number_contact']);
+        $number_contact = str_replace("(","",$number_contact);
+        $number_contact = str_replace(")","",$number_contact);
+        $number_contact = str_replace("-","",$number_contact);
+
         $customerData =  [
             'name'  => $customerCheckout['name'],
             'email' => $customerCheckout['email'],
             'cpf'   => $customerCheckout['cpf'],
             'contacts' => [
                 [
-                    'number_contact' => $customerCheckout['contacts'][0]['number_contact'],
+                    'number_contact' => ltrim($number_contact, 0),
                     'type_contact' => $customerCheckout['contacts'][0]['type_contact'],
                 ]
             ],

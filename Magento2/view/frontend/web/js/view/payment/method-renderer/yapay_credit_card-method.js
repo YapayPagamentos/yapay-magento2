@@ -166,9 +166,8 @@ define(
              * Verifica ativação do parcelamento caso a bandeira permita
              * @returns {boolean}
              */
-            isActiveSplit: function () {
-                return this.creditCardPaymentId() !== '19';
-
+            isActiveSplit: function () {                
+                return this.creditCardPaymentId() !== '19' && this.creditCardPaymentId() !== '15';
             },
 
             /**
