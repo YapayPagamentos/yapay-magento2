@@ -10,6 +10,8 @@ namespace Yapay\Magento2\Api;
 
 use Yapay\Magento2\Helper\YapayData;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\ValidatorException;
+use Magento\Framework\Phrase;
 
 class PaymentApi
 {
@@ -33,6 +35,27 @@ class PaymentApi
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payment));
 
         $result = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+
+        if($code != 200 && $code != 201) {
+            $error = json_decode($result);
+            $error_message = [];
+
+            if (isset($error->error_response->validation_errors)) {
+                foreach ($error->error_response->validation_errors as $value) {
+                    array_push($error_message, $value->message_complete);
+                }
+                throw new ValidatorException(new Phrase(implode(", ", $error_message)));
+            }
+
+            if (isset($error->error_response->general_errors)) {
+                foreach ($error->error_response->general_errors as $value) {
+                    array_push($error_message, $value->message);
+                }
+                throw new ValidatorException(new Phrase(implode(", ", $error_message)));
+            }
+        }
 
         return $result;
     }
