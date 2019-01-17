@@ -94,7 +94,7 @@ class ValidationYapay extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $cvv = intval($cvv);
         $cvv = strval($cvv);
-        if(strlen($cvv) == 3) {
+        if(strlen($cvv) <= 3) {
             return true;
         }
         return false;
