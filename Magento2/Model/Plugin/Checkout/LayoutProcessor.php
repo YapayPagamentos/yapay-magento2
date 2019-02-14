@@ -37,7 +37,7 @@ class LayoutProcessor
                     'id' => 'neighborhood-yapay'
                 ],
                 'dataScope' => 'shippingAddress.custom_attributes.neighborhood_yapay',
-                'label' => 'Bairro',
+                'label' => 'Bairro *',
                 'provider' => 'checkoutProvider',
                 'visible' => true,
                 'validation' => ['require' => true],
@@ -55,7 +55,7 @@ class LayoutProcessor
                     'id' => 'cpf-customer'
                 ],
                 'dataScope' => 'shippingAddress.custom_attributes.cpf_customer',
-                'label' => 'CPF',
+                'label' => 'CPF *',
                 'provider' => 'checkoutProvider',
                 'visible' => true,
                 'validation' => ['require' => true],

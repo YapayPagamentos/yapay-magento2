@@ -339,6 +339,16 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         
         $response = json_decode($paymentApi->generatePayment($payment, $this->getBaseURL()));
 
+
+        \Magento\Framework\App\ObjectManager::getInstance()
+        ->get('Psr\Log\LoggerInterface')
+        ->debug(json_encode( $payment ));
+
+        \Magento\Framework\App\ObjectManager::getInstance()
+        ->get('Psr\Log\LoggerInterface')
+        ->debug(json_encode( $response ));
+
+
         $paymentData->setAdditionalInformation("url_payment", $response->data_response->transaction->payment->url_payment);
         $paymentData->setAdditionalInformation("boleto_url", $response->data_response->transaction->payment->url_payment);
         $paymentData->setTransactionId(

@@ -118,8 +118,8 @@ class Capture extends Action
     {
         $this->changePayment($order, $transactionId, true);
 
-        $order->setState(Order::STATE_HOLDED);
-        $order->setStatus(Order::STATE_HOLDED);
+        $order->setState(Order::STATE_PROCESSING);
+        $order->setStatus(Order::STATE_PROCESSING);
     }
 
     /**
