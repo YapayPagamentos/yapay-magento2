@@ -302,13 +302,24 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
             $payment["transaction"]["shipping_price"] = $order["shipping_amount"];
         }
 
-        if (isset($order["shipping_discount_amount"])) {
-            $payment["transaction"]["price_discount"] = $order["shipping_discount_amount"];
+        $discount = str_replace("-", "",$order->getDiscountAmount());
+
+        if ($discount > 0) {
+            $payment["transaction"]["price_discount"] = $discount;
         }
+
+        // if (isset($order["shipping_discount_amount"])) {
+        //     $payment["transaction"]["price_discount"] = $order["shipping_discount_amount"];
+        // }
+
+        // \Magento\Framework\App\ObjectManager::getInstance()
+        // ->get('Psr\Log\LoggerInterface')
+        // ->debug(json_encode( $discount ));
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.0.6";
+        // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
         $paymentInfo = $paymentData->getData('additional_information');
 
