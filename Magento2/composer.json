@@ -9,8 +9,12 @@
   "version": "1.0.0",
   "authors":[
       {
-          "name": "Yapay Integração",
-          "email": "integracao@yapay.com.br"
+          "name": "Matheus Antonio Silva",
+          "email": "matheus.silva@yapay.com.br"
+      },
+      {
+        "name": "Jéssica Vicentini",
+        "email": "jvicentini@traylabs.com.br"
       }
   ],
   "licence": [

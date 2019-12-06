@@ -92,6 +92,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCheckoutVisitant($paymentData) {
         $order = $paymentData->getOrder();
+
         $checkCpfAndCnpj = $this->checkCpfAndCnpj($paymentData->getData('additional_information')['cpfCustomer'] , $paymentData->getData('additional_information')['cnpjCustomer'] );
 
         $number_contact = str_replace(" ","",$order->getBillingAddress()->getData('telephone'));
@@ -318,7 +319,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.0.6";
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.0.7";
         // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
         $paymentInfo = $paymentData->getData('additional_information');

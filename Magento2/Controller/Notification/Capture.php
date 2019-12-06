@@ -13,8 +13,11 @@ use Yapay\Magento2\Helper\YapayData;
 use Yapay\Magento2\Api\PaymentApi;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
 
-class Capture extends Action
+class Capture extends Action implements CsrfAwareActionInterface
 {
     const STATUS_WAITING  = 4;
     const STATUS_PROCESSING = 5;
@@ -72,6 +75,11 @@ class Capture extends Action
 
         $response = json_decode($this->paymentApi->getTransactionByTransactionToken($tokenTransaction, $this->getBaseURL()));
 
+        \Magento\Framework\App\ObjectManager::getInstance()
+        ->get('Psr\Log\LoggerInterface')
+        ->debug(json_encode($responde));
+
+
         $transaction = $response->data_response->transaction;
         $transactionId = $transaction->transaction_id;
         $statusId = $transaction->status_id;
@@ -80,7 +88,7 @@ class Capture extends Action
         $model = $this->_transactionFactory->create([]);
         $this->_transaction->load($model, $transactionId, 'txn_id');
         $order = $model->getOrder();
-        
+
         if ($statusId == self::STATUS_APPROVED) {
             $this->payed($order, $transactionId);
         }
@@ -198,4 +206,15 @@ class Capture extends Action
         $environment = $scopeConfig->getValue('payment/yapay_configuration/environment_configuration_yapay', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         return $environment;
     }
+
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
+        return null;
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
+    }
+
 }
