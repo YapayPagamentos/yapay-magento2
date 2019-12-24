@@ -77,7 +77,7 @@ class Capture extends Action implements CsrfAwareActionInterface
 
         \Magento\Framework\App\ObjectManager::getInstance()
         ->get('Psr\Log\LoggerInterface')
-        ->debug(json_encode($responde));
+        ->debug(json_encode($response));
 
 
         $transaction = $response->data_response->transaction;
