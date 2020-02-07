@@ -75,19 +75,30 @@ class Capture extends Action implements CsrfAwareActionInterface
 
         $response = json_decode($this->paymentApi->getTransactionByTransactionToken($tokenTransaction, $this->getBaseURL()));
 
-        \Magento\Framework\App\ObjectManager::getInstance()
-        ->get('Psr\Log\LoggerInterface')
-        ->debug(json_encode($responde));
-
+        // \Magento\Framework\App\ObjectManager::getInstance()
+        // ->get('Psr\Log\LoggerInterface')
+        // ->debug(json_encode('order abaixo'));
 
         $transaction = $response->data_response->transaction;
         $transactionId = $transaction->transaction_id;
         $statusId = $transaction->status_id;
         $statusName = $transaction->status_name;
+        $order_number = $transaction->order_number;
+
+        // echo '<br><pre>';
+        // var_dump($response);
+
+        echo('Notificação OK. Pedido: '.$order_number.' Status: '.$statusName);
 
         $model = $this->_transactionFactory->create([]);
-        $this->_transaction->load($model, $transactionId, 'txn_id');
+        $this->_transaction->load($model, $order_number, 'txn_id');
         $order = $model->getOrder();
+
+
+        // \Magento\Framework\App\ObjectManager::getInstance()
+        // ->get('Psr\Log\LoggerInterface')
+        // ->debug(json_encode($order_number = $transaction->order_number));
+
 
         if ($statusId == self::STATUS_APPROVED) {
             $this->payed($order, $transactionId);

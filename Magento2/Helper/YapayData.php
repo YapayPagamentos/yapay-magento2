@@ -255,7 +255,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
                     'number' => $street[1] ?? 'Não informado',
                     'city' => $order->getBillingAddress()->getCity(),
                     'state' => $order->getBillingAddress()->getRegion(),
-                    'neighborhood' => $paymentData->getData('additional_information')['neighborhoodCustomer'],
+                    // 'neighborhood' => $paymentData->getData('additional_information')['neighborhoodCustomer'],
                     'state' => $state,
                     'completion' => $street[2] ?? 'Não informado',
                     'neighborhood' => $street[3] ?? 'Não informado',
@@ -280,12 +280,15 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
     public function generateTransaction($paymentData)
     {
         $order = $paymentData->getOrder();
+        $orderIncrementId = $order->getData('increment_id');
+        $prefixoPedidoY = $this->getPrefixo();
         $payment = [];
         $payment["token_account"] = $this->getToken();
         $payment['customer'] = $this->generateCustomerData($paymentData);
         $payment["transaction_product"] = [];
         $items = $this->_cart->getItems()->getData();
-
+        
+        
         foreach ($items as $key => $item) {
             $payment["transaction_product"][$key]["description"] = $item["name"];
             $payment["transaction_product"][$key]["quantity"] = $item["qty"];
@@ -297,6 +300,13 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         $payment["transaction"] = [];
         $payment["transaction"]["customer_ip"] = $order["remote_ip"];
+
+        //order_number inicio
+
+        // limita a 20 caracteres
+        $payment["transaction"]["order_number"] = mb_strimwidth($prefixoPedidoY.$orderIncrementId, 0, 20);
+
+        //order_number fim
 
         if (isset($order["shipping_description"])) {
             $payment["transaction"]["shipping_type"] = $order["shipping_description"];
@@ -319,7 +329,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.0.7";
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.0.8";
         // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
         $paymentInfo = $paymentData->getData('additional_information');
@@ -330,6 +340,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         } else if ($paymentData->getData('method') == 'yapay_credit_card') {
 
+           
             $payment["payment"]["payment_method_id"] = $paymentInfo["cc_card"];
             $payment["payment"]["card_name"] = $paymentInfo["cc_cardholder"];
             $payment["payment"]["card_number"] = $paymentInfo["cc_number"];
@@ -352,9 +363,9 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         $response = json_decode($paymentApi->generatePayment($payment, $this->getBaseURL()));
 
 
-        \Magento\Framework\App\ObjectManager::getInstance()
-        ->get('Psr\Log\LoggerInterface')
-        ->debug(json_encode( $payment ));
+        // \Magento\Framework\App\ObjectManager::getInstance()
+        // ->get('Psr\Log\LoggerInterface')
+        // ->debug(json_encode( $payment ));
 
         \Magento\Framework\App\ObjectManager::getInstance()
         ->get('Psr\Log\LoggerInterface')
@@ -403,6 +414,17 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $token = $this->_scopeConfig->getValue('payment/yapay_configuration/token_configuration_yapay', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         return $token;
+    }
+
+    /**
+     * Busca prefixo do pedido na configuração da plataforma
+     *
+     * @return mixed
+     */
+    public function getPrefixo()
+    {
+        $prefixoPedido = $this->_scopeConfig->getValue('payment/yapay_configuration/prefixoPedido', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $prefixoPedido;
     }
 
     public function getVersionModule()

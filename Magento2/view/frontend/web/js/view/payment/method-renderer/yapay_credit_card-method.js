@@ -243,6 +243,17 @@ define(
                 return window.checkoutConfig.payment.yapay_credit_card.installments;
             },
 
+
+            /**
+             * Busca valor de parcela minima
+             *
+             * @returns {Document.valor_minimo}
+             */
+            getValorMinimo: function() {
+                return window.checkoutConfig.payment.yapay_credit_card.valor_minimo;
+            },            
+
+
             /**
              * Retorna as bandeiras disponiveis
              *
@@ -301,17 +312,28 @@ define(
                     $installmentArray[i] = i+1;
                 }
                 var total = quote.totals();
-                return _.map(this.getInterestInstallmentsValues(), function(value, key) {
+                var valorMinimo = this.getValorMinimo();
+                return _.reduce(this.getInterestInstallmentsValues(), function(acc, value, key) {
                     var totalInterest = total.grand_total + (total.grand_total * parseFloat(value)/100);
                     var totalOrder = totalInterest.toFixed(2);
                     var installmentsValue = totalOrder / (key + 1);
                     var installmentsValueDecimal = installmentsValue.toFixed(2);
-
-                    return {
-                        'value': key + 1,
-                        'installment': key+1 + ' x R$' + installmentsValueDecimal + ' Total à Pagar = R$' + totalOrder
+                    var valorMinimoDecimal = (Math.round(valorMinimo * 100) / 100).toFixed(2);
+                    
+                    if (parseFloat(installmentsValueDecimal) >= parseFloat(valorMinimoDecimal)) {
+                        return [...acc, {
+                            'value': key + 1,
+                            'installment': key+1 + ' x R$' + installmentsValueDecimal + ' Total à Pagar = R$' + totalOrder
+                        }]
+                    } else {
+                        return acc.length === 0 ? [{
+                            'value': 1,
+                            'installment': 1 + ' x R$' + (Math.round(totalOrder * 100) / 100).toFixed(2)  + ' Total à Pagar = R$' + totalOrder
+                            
+                        }] : acc
                     }
-                });
+
+                }, []);
             },
 
 

@@ -3,6 +3,10 @@
     <group id="yapay_credit_card" translate="label" type="text" sortOrder="5" showInDefault="1"
            showInWebsite="1" showInStore="1">
         <label>Yapay Intermediador - Cartão de Crédito</label>
+
+        <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Title</label>
+        </field>        
         <field id="active" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Ativo</label>
             <tooltip>Ativa / Disativa Yapay Checkout.</tooltip>
@@ -23,6 +27,15 @@
             </depends>
             <source_model>Yapay\Magento2\Model\System\Config\QtdSplit</source_model>
         </field>
+        <field id="valor_minimo" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Valor mínimo de parcela</label>
+            <comment>Valor mínimo da parcela que será informada no campo parcela</comment>
+            <depends>
+                <field id="active">1</field>
+            </depends>
+            <!-- <source_model>Yapay\Magento2\Model\System\Config\ValorMinimoParc</source_model> -->
+        </field>
+
         <field id="parcel_interest_1" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Juros por parcela 1</label>
             <tooltip>Certifique-se de que o juros informado seja o mesmo do Yapay</tooltip>

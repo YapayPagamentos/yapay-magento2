@@ -70,6 +70,7 @@ class CreditCardProvider implements ConfigProviderInterface
                     'years' => [$this->_methodCode => $this->ccConfig->getCcYears()],
                     'hasVerification' => $this->ccConfig->hasVerification(),
                     'installments' => $this->Installment(),
+                    'valor_minimo' => $this->valorMinimoParcela(),
                     'cctypes' => $this->CcType(),
                     'icons' => $this->getIcons(),
                     'interestInstallments' => $this->interestInstallments()
@@ -174,6 +175,15 @@ class CreditCardProvider implements ConfigProviderInterface
         return $installmentsInterest;
     }
 
+    /**
+     * Busca o valor minimo da parcela
+     *
+     * @return array
+     */    
+    public function valorMinimoParcela()
+    {
+        return $this->scopeConfig->getValue('payment/yapay_credit_card/valor_minimo');   
+    }
 
 //    /**
 //     * Calcula os juros de cada parcela

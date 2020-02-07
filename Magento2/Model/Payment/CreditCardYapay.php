@@ -29,7 +29,7 @@ class CreditCardYapay extends PaymentAbstract
         $infoInstance = $this->getInfoInstance();
         $currentData = $data->getAdditionalData();
         $data->getData(json_encode($this->_scopeConfig));
-        $this->_logger->debug(json_encode($data->getData()));
+        // $this->_logger->debug(json_encode($data->getData()));
         $helper = new ValidationYapay($this->_scopeConfig);
 
         $helper->validateCreditCard($data->getData());

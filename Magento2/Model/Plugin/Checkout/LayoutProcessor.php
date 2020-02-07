@@ -26,24 +26,24 @@ class LayoutProcessor
         $customerSession = $objectManager->get('Magento\Customer\Model\Session');
 
         if($customerSession->getCustomer()->getId() == null) {
-            $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']['children']
-            ['shippingAddress']['children']['shipping-address-fieldset']['children']['neighborhood_yapay'] = [
-                'component' => 'Magento_Ui/js/form/element/abstract',
-                'config' => [
-                    'customScope' => 'shippingAddress.custom_attributes',
-                    'template' => 'ui/form/field',
-                    'elementTmpl' => 'ui/form/element/input',
-                    'options' => [],
-                    'id' => 'neighborhood-yapay'
-                ],
-                'dataScope' => 'shippingAddress.custom_attributes.neighborhood_yapay',
-                'label' => 'Bairro *',
-                'provider' => 'checkoutProvider',
-                'visible' => true,
-                'validation' => ['require' => true],
-                'sortOrder' => 95,
-                'id' => 'neighborhood-yapay'
-            ];
+            // $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']['children']
+            // ['shippingAddress']['children']['shipping-address-fieldset']['children']['neighborhood_yapay'] = [
+            //     'component' => 'Magento_Ui/js/form/element/abstract',
+            //     'config' => [
+            //         'customScope' => 'shippingAddress.custom_attributes',
+            //         'template' => 'ui/form/field',
+            //         'elementTmpl' => 'ui/form/element/input',
+            //         'options' => [],
+            //         'id' => 'neighborhood-yapay'
+            //     ],
+            //     'dataScope' => 'shippingAddress.custom_attributes.neighborhood_yapay',
+            //     'label' => 'Bairro *',
+            //     'provider' => 'checkoutProvider',
+            //     'visible' => true,
+            //     'validation' => ['require' => true],
+            //     'sortOrder' => 95,
+            //     'id' => 'neighborhood-yapay'
+            // ];
             $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']['children']
             ['shippingAddress']['children']['shipping-address-fieldset']['children']['cpf_customer'] = [
                 'component' => 'Magento_Ui/js/form/element/abstract',

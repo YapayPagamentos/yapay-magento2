@@ -14,6 +14,12 @@
             <tooltip>Entre na sua conta Yapay ou Sandbox para obter um token.</tooltip>
             <validate>required-entry</validate>
         </field>
+        <field id="prefixoPedido" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Prefixo do pedido</label>
+            <depends>
+                <field id="active">1</field>
+            </depends>
+        </field>
 
         <field id="email_configuration_yapay" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>E-mail</label>
