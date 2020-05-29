@@ -32,7 +32,8 @@ class PaymentApi
         );
         curl_setopt ( $ch, CURLOPT_POST, 1 );
         curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payment));
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode($payment));
+        curl_setopt ( $ch, CURLOPT_SSLVERSION, 6 );
 
         $result = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -75,7 +76,7 @@ class PaymentApi
         curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
 
         $result = curl_exec($ch);
-        
+
         return $result;
     }
 }

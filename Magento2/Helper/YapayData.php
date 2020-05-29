@@ -205,8 +205,8 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
             return [
                 'cnpj'  => $customerCheckout['cnpj'],
                 'company_name' => $billingAddress->getCompany(),
-                'trade_name' => $billingAddress->getCompany(),        
-            ];             
+                'trade_name' => $billingAddress->getCompany(),
+            ];
         }
         return false;
     }
@@ -287,9 +287,27 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         $payment['customer'] = $this->generateCustomerData($paymentData);
         $payment["transaction_product"] = [];
         $items = $this->_cart->getItems()->getData();
-        
-        
+        // $item = [];
+
+        // $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        // $cart = $objectManager->get('\Magento\Checkout\Model\Cart');
+
+        // // retrieve quote items collection
+        // $itemsCollection = $cart->getQuote()->getItemsCollection();
+
+        // // get array of all items what can be display directly
+        // $itemsVisible = $cart->getQuote()->getAllVisibleItems();
+
+        // // retrieve quote items array
+        // $items = $cart->getQuote()->getAllItems();
+
+
         foreach ($items as $key => $item) {
+
+            \Magento\Framework\App\ObjectManager::getInstance()
+            ->get('Psr\Log\LoggerInterface')
+            ->debug( $item["name"] );
+
             $payment["transaction_product"][$key]["description"] = $item["name"];
             $payment["transaction_product"][$key]["quantity"] = $item["qty"];
             $payment["transaction_product"][$key]["price_unit"] = $item["price"];
@@ -319,20 +337,29 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
             $payment["transaction"]["price_discount"] = $discount;
         }
 
-        // if (isset($order["shipping_discount_amount"])) {
-        //     $payment["transaction"]["price_discount"] = $order["shipping_discount_amount"];
-        // }
+        $paymentInfo = $paymentData->getData('additional_information');
 
         // \Magento\Framework\App\ObjectManager::getInstance()
         // ->get('Psr\Log\LoggerInterface')
-        // ->debug(json_encode( $discount ));
+        // ->debug( $TotalOrder  );
+
+        if ($paymentData->getData('method') == 'yapay_credit_card') {
+            $parcelas = $this->getParcelas();
+            $parcelaCheckout = $paymentInfo["cc_installments"];
+            $TotalOrder = $order->getGrandTotal();
+
+            if ($parcelas[$parcelaCheckout] > "0.0") {
+                $totalJuros = ( floatval($TotalOrder) *  (floatval($parcelas[$parcelaCheckout]) / 100) );
+
+                $payment["transaction"]["price_additional"] = $totalJuros;
+            }
+        }
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.0.8";
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.0.9";
         // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
-        $paymentInfo = $paymentData->getData('additional_information');
+
 
         if ($paymentData->getData('method') == 'yapay_bank_slip') {
 
@@ -340,7 +367,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         } else if ($paymentData->getData('method') == 'yapay_credit_card') {
 
-           
+
             $payment["payment"]["payment_method_id"] = $paymentInfo["cc_card"];
             $payment["payment"]["card_name"] = $paymentInfo["cc_cardholder"];
             $payment["payment"]["card_number"] = $paymentInfo["cc_number"];
@@ -359,7 +386,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         $objectManager = ObjectManager::getInstance();
 
         $paymentApi = $objectManager->get(PaymentApi::class);
-        
+
         $response = json_decode($paymentApi->generatePayment($payment, $this->getBaseURL()));
 
 
@@ -431,6 +458,43 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $version = $this->_scopeConfig->getValue('modules/Yapay_Magento2/version', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         return $version;
+    }
+
+    /**
+     * Busca token do lojista na configuração da plataforma
+     *
+     * @return mixed
+     */
+    public function getParcelas()
+    {
+        $parcel_interest_1 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_1', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_2 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_2', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_3 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_3', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_4 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_4', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_5 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_5', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_6 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_6', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_7 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_7', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_8 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_8', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_9 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_9', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_10 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_10', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_11 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_11', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $parcel_interest_12 = $this->_scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_12', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+        $parcela = array("1"  => $parcel_interest_1,
+                         "2"  => $parcel_interest_2,
+                         "3"  => $parcel_interest_3,
+                         "4"  => $parcel_interest_4,
+                         "5"  => $parcel_interest_5,
+                         "6"  => $parcel_interest_6,
+                         "7"  => $parcel_interest_7,
+                         "8"  => $parcel_interest_8,
+                         "9"  => $parcel_interest_9,
+                         "10" => $parcel_interest_10,
+                         "11" => $parcel_interest_11,
+                         "12" =>  $parcel_interest_12);
+
+
+        return $parcela;
     }
 
     /**
