@@ -16,9 +16,6 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
-use Magento\Sales\Api\Data\OrderInterface;
-use Magento\Sales\Api\OrderManagementInterface;
-use Magento\Sales\Model\Order\Email\Sender\OrderCommentSender;
 
 class Capture extends Action implements CsrfAwareActionInterface
 {
@@ -52,16 +49,13 @@ class Capture extends Action implements CsrfAwareActionInterface
      */
     protected $_transactionFactory;
 
-    public function __construct(Context $context, OrderManagementInterface $orderManagement, OrderInterface $order2, OrderCommentSender $orderCommentSender)
+    public function __construct(Context $context)
     {
         parent::__construct($context);
-        $this->order = $order2;
-        $this->orderManagement = $orderManagement;
         $this->paymentApi = $context->getObjectManager()->get(PaymentApi::class);
         $this->helper = $context->getObjectManager()->get(YapayData::class);
         $this->_transaction  = $context->getObjectManager()->get(Transaction::class);
         $this->_transactionFactory = $context->getObjectManager()->get(TransactionFactory::class);
-        $this->_orderCommentSender = $orderCommentSender;
     }
 
     /**
@@ -81,17 +75,15 @@ class Capture extends Action implements CsrfAwareActionInterface
 
         $response = json_decode($this->paymentApi->getTransactionByTransactionToken($tokenTransaction, $this->getBaseURL()));
 
-
+        // \Magento\Framework\App\ObjectManager::getInstance()
+        // ->get('Psr\Log\LoggerInterface')
+        // ->debug(json_encode('order abaixo'));
 
         $transaction = $response->data_response->transaction;
         $transactionId = $transaction->transaction_id;
         $statusId = $transaction->status_id;
         $statusName = $transaction->status_name;
         $order_number = $transaction->order_number;
-
-        // \Magento\Framework\App\ObjectManager::getInstance()
-        // ->get('Psr\Log\LoggerInterface')
-        // ->debug($transactionId);
 
         // echo '<br><pre>';
         // var_dump($response);
@@ -129,7 +121,7 @@ class Capture extends Action implements CsrfAwareActionInterface
 
         $order->addStatusToHistory(
             $order->getStatus(),
-            'Campainha recebida vinda do Yapay: Transaction ID '.$transactionId. ' - Status '.$statusName, true
+            'Campainha recebida vinda do Yapay: Transaction ID '.$transactionId. ' - Status '.$statusName
         );
 
         $order->save();
@@ -193,68 +185,22 @@ class Capture extends Action implements CsrfAwareActionInterface
      */
     protected function changePayment($order, $transactionId, $isPayed)
     {
-
-        //invoices
         $invoices = $order->getInvoiceCollection();
 
         foreach ($invoices as $invoice) {
             if ($invoice->getData('transaction_id') != $transactionId) {
-                // continue;
-                if ($isPayed) {
-                    $invoice->pay();
-                }else{
-                    $invoice->setState(Order\Invoice::STATE_CANCELED);
-                }
+                continue;
             }
+
+            if ($isPayed) {
+                $invoice->pay();
+            }else{
+                $invoice->setState(Order\Invoice::STATE_CANCELED);
+            }
+
             $invoice->save();
         }
-
-        $transaction_id = $order->getOwnId();
-        $payment = $order->getPayment();
-        $transactionId = $payment->getLastTransId();
-        $method = $payment->getMethodInstance();
-        $description_for_customer = "teste api";
-        $order = $this->order->loadByIncrementId($transaction_id);
-
-        \Magento\Framework\App\ObjectManager::getInstance()
-        ->get('Psr\Log\LoggerInterface')
-        ->debug($transaction_id);
-
-        if(Order::STATE_CANCELED !== $order->getState()){
-            $method->fetchTransactionInfo($payment, $transactionId, $description_for_customer);
-            $order->save();
-            $this->addCancelDetails($description_for_customer, $order);
-        }
-
-        // \Magento\Framework\App\ObjectManager::getInstance()
-        // ->get('Psr\Log\LoggerInterface')
-        // ->debug($method);
-
-        // $items = $order->getItemsCollection();
-
-        // foreach ($items as $item) {
-        //     // $item->setStatus(\Magento\Sales\Model\Order\Item::STATUS_PENDING);
-        //     // $item-cancel();
-
-        //     \Magento\Framework\App\ObjectManager::getInstance()
-        //     ->get('Psr\Log\LoggerInterface')
-        //     ->debug($order->getPayment());
-        //     // $item->save();
-
-        // }
     }
-
-    private function addCancelDetails($comment, $order){
-		$status = $this->orderManagement->getStatus($order->getEntityId());
-		$history = $order->addStatusHistoryComment($comment, $status);
-	    $history->setIsVisibleOnFront(1);
-	    $history->setIsCustomerNotified(1);
-	    $history->save();
-	    $comment = trim(strip_tags($comment));
-	    $order->save();
-	    $this->_orderCommentSender->send($order, 1, $comment);
-	    return $this;
-	}
 
     public function getBaseURL()
     {

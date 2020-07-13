@@ -1,0 +1,28 @@
+<fieldset data-bind="attr: {class: 'fieldset payment items transference ' + getCode(), id: 'payment_form_' + getCode()}">
+    <legend class="legend">
+        <span><!-- ko i18n: 'Credit Card Information'--><!-- /ko --></span>
+    </legend><br/>
+    <div class="field required">
+        <label data-bind="attr: {for: getCode() + '_tt_paymentMethod'}" class="label">
+            <span><!-- ko i18n: 'Métodos de Pagamento disponíveis'--><!-- /ko --></span>
+        </label>
+        <div class="control">
+            <select name="payment[tt_paymentMethod]" class="select"
+                    data-bind="attr: {
+                                    id: getCode() + 'tt_paymentMethod',
+                                    title: $t('Means Of Payment'),
+                                    enable: isActive($parents),
+                                    'data-container': getCode() + '-tt_paymentMethod'},
+                                    enable: isActive($parents),
+                                    options: getMeansOfPaymentAvailableValues(),
+                                    optionsValue: 'value',
+                                    optionsText: 'paymentMethod',
+                                    value: meansOfPaymentAvailable">
+            </select>
+        </div>
+    </div>
+    <br>
+    <br>
+    <!-- /ko -->
+</fieldset>
+

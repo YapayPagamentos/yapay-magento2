@@ -1,0 +1,79 @@
+<fieldset class="fieldset create account" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>">
+    <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Additional Information') ?></span></legend><br>
+
+    <div class="field promotion_code required">
+        <label for="cpf" class="label"><span><?php /* @escapeNotVerified */ echo __('CPF') ?></span></label>
+        <div class="control">
+            <input onblur="onlyNumber(event)" value="<?php  if ($block->getCustomer()) { echo $block->getCustomer()->getCustomAttribute('cpf')->getValue(); } ?>" type="text" name="cpf" id="cpf" title="<?php /* @escapeNotVerified */ echo __('CPF') ?>" class="input-text" data-validate="{required:true}" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="field promotion_code">
+        <label for="cnpj" class="label"><span><?php /* @escapeNotVerified */ echo __('CNPJ') ?></span></label>
+        <div class="control">
+            <input onblur="onlyNumber(event)" value="<?php  if ($block->getCustomer()) { echo $block->getCustomer()->getCustomAttribute('cnpj')->getValue(); } ?>" type="text" name="cnpj" id="cnpj" title="<?php /* @escapeNotVerified */ echo __('CNPJ') ?>" class="input-text" data-validate="{required:false}" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="field promotion_code required">
+        <label for="phone" class="label"><span><?php /* @escapeNotVerified */ echo __('Telefone/Celular') ?></span></label>
+        <div class="control">
+            <input id="customer-phone" value="<?php  if ($block->getCustomer()) { echo  $block->getCustomer()->getCustomAttribute('phone')->getValue(); } ?>" type="text" name="phone" id="phone" title="<?php /* @escapeNotVerified */ echo __('Telefone/Celular') ?>" class="input-text" data-validate="{required:true}" autocomplete="off">
+        </div>
+    </div>
+</fieldset>
+
+
+<script>
+
+    function onlyNumber(e)
+    {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    }
+
+    function phoneMask( field ) {
+
+        function verify( fieldValue,  isOnBlur ) {
+
+            fieldValue = fieldValue.replace(/\D/g,"");
+            fieldValue = fieldValue.replace(/^(\d{2})(\d)/g,"($1)$2");
+
+            if( isOnBlur ) {
+
+                fieldValue = fieldValue.replace(/(\d)(\d{4})$/,"$1-$2");
+            } else {
+
+                fieldValue = fieldValue.replace(/(\d)(\d{3})$/,"$1-$2");
+            }
+
+            return fieldValue;
+        }
+
+        field.onkeypress = function (evt) {
+
+            var code = (window.event)? window.event.keyCode : evt.which;
+            var valor = this.value
+
+            if(code > 57 || (code < 48 && code != 8 ))  {
+                return false;
+            } else {
+                this.value = verify(valor, false);
+            }
+        }
+
+        field.onblur = function() {
+
+            var valor = this.value;
+            if( valor.length < 13 ) {
+                this.value = ""
+            }else {
+                this.value = verify( this.value, true );
+            }
+        }
+
+        field.maxLength = 14;
+    }
+
+    phoneMask(document.getElementById('customer-phone'));
+
+</script>
