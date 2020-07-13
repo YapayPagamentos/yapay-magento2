@@ -356,7 +356,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.0.9";
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.0";
         // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
 
