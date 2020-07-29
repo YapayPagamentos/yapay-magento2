@@ -289,24 +289,15 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         $items = $this->_cart->getItems()->getData();
         // $item = [];
 
-        // $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        // $cart = $objectManager->get('\Magento\Checkout\Model\Cart');
-
-        // // retrieve quote items collection
-        // $itemsCollection = $cart->getQuote()->getItemsCollection();
-
-        // // get array of all items what can be display directly
-        // $itemsVisible = $cart->getQuote()->getAllVisibleItems();
-
-        // // retrieve quote items array
-        // $items = $cart->getQuote()->getAllItems();
-
+        //Filtra a var $items removendoo que é product_type => configurable
+        foreach($items as $key => $value){
+            $found = array_search('configurable',$value);
+            if($found != false AND $found == 'product_type'){
+                unset($items[$key]);
+            }
+        }
 
         foreach ($items as $key => $item) {
-
-            \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug( $item["name"] );
 
             $payment["transaction_product"][$key]["description"] = $item["name"];
             $payment["transaction_product"][$key]["quantity"] = $item["qty"];
@@ -356,7 +347,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.0";
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.1";
         // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
 

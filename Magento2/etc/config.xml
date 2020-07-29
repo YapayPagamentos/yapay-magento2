@@ -4,7 +4,7 @@
     <default>
         <modules>
             <Yapay_Magento2>
-                <version>1.1.0</version>
+                <version>1.1.1</version>
             </Yapay_Magento2>
         </modules>
         <payment>
