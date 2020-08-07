@@ -20,6 +20,8 @@
         <div class="actions-toolbar">
             <div class="primary">
                 <p><strong><a class="order-number" href="<?php echo $block->getUrlPayment() ?>"><span><?php /* @escapeNotVerified */ echo __('Imprima seu boleto') ?></span></a></strong></p>
+                <br>
+                <p><strong><span><?php /* @escapeNotVerified */ echo __('Linha digitável: ') ?></strong><?php echo $block->getLinhaDigitavel() ?></span></p>
             </div>
         </div>
     <?php endif; ?>

@@ -14,6 +14,16 @@ class Success extends \Magento\Checkout\Block\Onepage\Success
 {
 
     /**
+     * Linha Digitavel
+     *
+     * @return string[]
+     */
+    public function getLinhaDigitavel()
+    {
+        return $this->_checkoutSession->getLastRealOrder()->getPayment()->getAdditionalInformation("linha_digitavel");
+    }
+
+    /**
      * Chama a url do pagamento
      *
      * @return string[]

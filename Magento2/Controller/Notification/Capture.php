@@ -209,46 +209,41 @@ class Capture extends Action implements CsrfAwareActionInterface
             $invoice->save();
         }
 
-        $transaction_id = $order->getOwnId();
-        $payment = $order->getPayment();
-        $transactionId = $payment->getLastTransId();
-        $method = $payment->getMethodInstance();
-        $description_for_customer = "teste api";
-        $order = $this->order->loadByIncrementId($transaction_id);
+        // if($order->getState() == 'canceled') {
+        //     $IdtransacaoYapay = $transactionId;
+        //     $transaction_id = $order->getOwnId();
+        //     $payment = $order->getPayment();
+        //     $transactionId = $payment->getLastTransId();
+        //     $method = $payment->getMethodInstance();
+        //     $description_for_customer = "O pedido ".$transactionId. " - ID Yapay " .$IdtransacaoYapay." foi cancelado. Enviado pela Yapay";
 
-        \Magento\Framework\App\ObjectManager::getInstance()
-        ->get('Psr\Log\LoggerInterface')
-        ->debug($transaction_id);
+        //     $method->fetchTransactionInfo($payment, $transactionId, $description_for_customer);
 
-        if(Order::STATE_CANCELED !== $order->getState()){
-            $method->fetchTransactionInfo($payment, $transactionId, $description_for_customer);
-            $order->save();
-            $this->addCancelDetails($description_for_customer, $order);
-        }
+        //     $items = $order->getItemsCollection();
+
+        //     foreach ($items as $item) {
+        //         if ($item->getProductType() != 'configurable') {
+        //             $item->setQtyCanceled((double)$item->getQtyInvoiced());
+        //             $item->setStatus(\Magento\Sales\Model\Order\Item::STATUS_CANCELED);
+        //             $item->save();
+        //         }
+        //     }
+
+        //     $this->addCancelDetails($description_for_customer, $order);
+        // }
 
         // \Magento\Framework\App\ObjectManager::getInstance()
         // ->get('Psr\Log\LoggerInterface')
-        // ->debug($method);
+        // ->debug($item->getStatusId());
 
-        // $items = $order->getItemsCollection();
 
-        // foreach ($items as $item) {
-        //     // $item->setStatus(\Magento\Sales\Model\Order\Item::STATUS_PENDING);
-        //     // $item-cancel();
-
-        //     \Magento\Framework\App\ObjectManager::getInstance()
-        //     ->get('Psr\Log\LoggerInterface')
-        //     ->debug($order->getPayment());
-        //     // $item->save();
-
-        // }
     }
 
     private function addCancelDetails($comment, $order){
 		$status = $this->orderManagement->getStatus($order->getEntityId());
 		$history = $order->addStatusHistoryComment($comment, $status);
 	    $history->setIsVisibleOnFront(1);
-	    $history->setIsCustomerNotified(1);
+	    $history->setIsCustomerNotified(0);
 	    $history->save();
 	    $comment = trim(strip_tags($comment));
 	    $order->save();

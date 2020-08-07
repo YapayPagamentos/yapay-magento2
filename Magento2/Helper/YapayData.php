@@ -347,7 +347,7 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.1";
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.2";
         // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
 
@@ -391,16 +391,40 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
 
         $paymentData->setAdditionalInformation("url_payment", $response->data_response->transaction->payment->url_payment);
+        $paymentData->setAdditionalInformation("linha_digitavel", $response->data_response->transaction->payment->linha_digitavel);
         $paymentData->setAdditionalInformation("boleto_url", $response->data_response->transaction->payment->url_payment);
         $paymentData->setTransactionId(
             $response->data_response->transaction->order_number
         )->setIsTransactionClosed(0);
+
+        \Magento\Framework\App\ObjectManager::getInstance()
+        ->get('Psr\Log\LoggerInterface')
+        ->debug(json_encode( $response ));
+
+        if ($paymentData->getData('method') == 'yapay_credit_card') {
+            if ($paymentData->getAdditionalInformation("cc_number")) {
+                $cc_numberMasked = $this->ccMasking($paymentData->getAdditionalInformation("cc_number"));
+                $paymentData->setAdditionalInformation("cc_number", $cc_numberMasked);
+            }
+
+            if ($paymentData->getAdditionalInformation("cc_security_code"))  {
+                $cvvMasked = "XXX";
+                $paymentData->setAdditionalInformation("cc_security_code", $cvvMasked);
+            }
+        }
+
 
         $paymentData->update();
 
         return $paymentData;
     }
 
+    /**
+     * Método retorna cartão mascarado
+     */
+    protected function ccMasking($number, $maskingCharacter = 'X'){
+        return substr($number, 0, 4) . str_repeat($maskingCharacter, strlen($number) - 8) . substr($number, -4);
+    }
 
     /**
      * Método retorna o cliente http
