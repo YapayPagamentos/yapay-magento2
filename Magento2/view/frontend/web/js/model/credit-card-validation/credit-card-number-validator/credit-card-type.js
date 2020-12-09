@@ -14,8 +14,8 @@ define(
                 payment_id: '15',
                 pattern: '^6(?:011|5[0-9]{2})[0-9]{12}$',
                 gaps: [4, 8, 12],
-                lengths: [16], 
-                code: { 
+                lengths: [16],
+                code: {
                     name: 'CID',
                     size: 3
                 }
@@ -133,6 +133,7 @@ define(
         ];
         return {
             getCardTypes: function (cardNumber) {
+
                 var i, value,
                     result = [];
                 if (utils.isEmpty(cardNumber)) {

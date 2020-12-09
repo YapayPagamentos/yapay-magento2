@@ -111,6 +111,7 @@ define(
                 var self = this;
                 this._super();
 
+
                 //Set credit card number to credit card data object
                 this.creditCardNumber.subscribe(function(value) {
                     var result;
@@ -133,7 +134,13 @@ define(
                     if (result.isValid) {
                         creditCardData.creditCardNumber = value;
                         self.creditCardType(result.card.type);
-                        self.creditCardPaymentId(result.card.payment_id)
+                        self.creditCardPaymentId(result.card.payment_id);
+                        var fp = window.yapay.FingerPrint({ env: '' });
+                        $('#finger_print').val(fp.getFingerPrint());
+
+                        // $('input[name="payment[cc_number]"]').keypress(function(event){
+
+                        // });
                     }
                 });
 
@@ -166,7 +173,7 @@ define(
              * Verifica ativação do parcelamento caso a bandeira permita
              * @returns {boolean}
              */
-            isActiveSplit: function () {                
+            isActiveSplit: function () {
                 return this.creditCardPaymentId() !== '19' && this.creditCardPaymentId() !== '15';
             },
 
@@ -251,7 +258,7 @@ define(
              */
             getValorMinimo: function() {
                 return window.checkoutConfig.payment.yapay_credit_card.valor_minimo;
-            },            
+            },
 
 
             /**
@@ -319,7 +326,7 @@ define(
                     var installmentsValue = totalOrder / (key + 1);
                     var installmentsValueDecimal = installmentsValue.toFixed(2);
                     var valorMinimoDecimal = (Math.round(valorMinimo * 100) / 100).toFixed(2);
-                    
+
                     if (parseFloat(installmentsValueDecimal) >= parseFloat(valorMinimoDecimal)) {
                         return [...acc, {
                             'value': key + 1,
@@ -329,7 +336,7 @@ define(
                         return acc.length === 0 ? [{
                             'value': 1,
                             'installment': 1 + ' x R$' + (Math.round(totalOrder * 100) / 100).toFixed(2)  + ' Total à Pagar = R$' + totalOrder
-                            
+
                         }] : acc
                     }
 

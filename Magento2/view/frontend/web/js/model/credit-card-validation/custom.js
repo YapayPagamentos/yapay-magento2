@@ -53,4 +53,5 @@
         rule.unshift(i);
         $.validator.addMethod.apply($.validator, rule);
     });
+
 }));

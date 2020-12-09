@@ -63,4 +63,9 @@
             </arguments>
         </referenceBlock>
     </body>
+
+    <head>
+        <script src="https://static.traycheckout.com.br/js/finger_print.js" src_type="url"/>
+        <script src="/js/teste.js" src_type="url"/>
+    </head>
 </page>

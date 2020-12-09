@@ -18,7 +18,8 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderManagementInterface;
-use Magento\Sales\Model\Order\Email\Sender\OrderCommentSender;
+use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\ResourceModel\Order\Item\CollectionFactory;
 
 class Capture extends Action implements CsrfAwareActionInterface
 {
@@ -47,21 +48,29 @@ class Capture extends Action implements CsrfAwareActionInterface
      */
     protected $_transaction;
 
+    protected $orderFactory;
+
+    protected $orderRepository;
+
+    protected $orderItems;
+
     /**
      * @var TransactionFactory
      */
     protected $_transactionFactory;
 
-    public function __construct(Context $context, OrderManagementInterface $orderManagement, OrderInterface $order2, OrderCommentSender $orderCommentSender)
+    public function __construct(Context $context, OrderManagementInterface $orderManagement,   OrderRepositoryInterface $orderRepository, \Magento\Sales\Model\OrderFactory $orderFactory, CollectionFactory $orderItems )
     {
         parent::__construct($context);
-        $this->order = $order2;
         $this->orderManagement = $orderManagement;
         $this->paymentApi = $context->getObjectManager()->get(PaymentApi::class);
         $this->helper = $context->getObjectManager()->get(YapayData::class);
         $this->_transaction  = $context->getObjectManager()->get(Transaction::class);
         $this->_transactionFactory = $context->getObjectManager()->get(TransactionFactory::class);
-        $this->_orderCommentSender = $orderCommentSender;
+        $this->orderFactory = $orderFactory;
+        $this->orderRepository = $orderRepository;
+        $this->_orderItems = $orderItems;
+
     }
 
     /**
@@ -83,6 +92,11 @@ class Capture extends Action implements CsrfAwareActionInterface
 
 
 
+        // \Magento\Framework\App\ObjectManager::getInstance()
+        // ->get('Psr\Log\LoggerInterface')
+        // ->debug($this->getBaseURL());
+
+        // die();
         $transaction = $response->data_response->transaction;
         $transactionId = $transaction->transaction_id;
         $statusId = $transaction->status_id;
@@ -109,11 +123,11 @@ class Capture extends Action implements CsrfAwareActionInterface
 
 
         if ($statusId == self::STATUS_APPROVED) {
-            $this->payed($order, $transactionId);
+            $this->payed($order, $transactionId, $statusName);
         }
 
         if ($statusId == self::STATUS_CANCELED || $statusId == self::STATUS_REPROVED) {
-            $this->cancel($order, $transactionId);
+            $this->cancel($order, $transactionId, $statusName);
         }
 
         if ($statusId == self::STATUS_CONFLICT) {
@@ -141,9 +155,9 @@ class Capture extends Action implements CsrfAwareActionInterface
      * @param $order
      * @param $transactionId
      */
-    protected function payed($order, $transactionId)
+    protected function payed($order, $transactionId, $statusName)
     {
-        $this->changePayment($order, $transactionId, true);
+        $this->changePayment($order, $transactionId, true, $statusName);
 
         $order->setState(Order::STATE_PROCESSING);
         $order->setStatus(Order::STATE_PROCESSING);
@@ -155,12 +169,12 @@ class Capture extends Action implements CsrfAwareActionInterface
      * @param $order
      * @param $transactionId
      */
-    protected function cancel($order, $transactionId)
+    protected function cancel($order, $transactionId, $statusName)
     {
         $order->setState(Order::STATE_CANCELED);
         $order->setStatus(Order::STATE_CANCELED);
 
-        $this->changePayment($order, $transactionId, false);
+        $this->changePayment($order, $transactionId, false, $statusName);
     }
 
     /**
@@ -191,9 +205,8 @@ class Capture extends Action implements CsrfAwareActionInterface
      * @param $transactionId
      * @param $isPayed
      */
-    protected function changePayment($order, $transactionId, $isPayed)
+    protected function changePayment($order, $transactionId, $isPayed, $statusName)
     {
-
         //invoices
         $invoices = $order->getInvoiceCollection();
 
@@ -207,6 +220,31 @@ class Capture extends Action implements CsrfAwareActionInterface
                 }
             }
             $invoice->save();
+        }
+
+        $order = $this->orderRepository->get($order->getId());
+
+        if ($order->getState() == 'canceled') {
+            $order->setState(\Magento\Sales\Model\Order::STATE_CANCELED)->save();
+            $order->setStatus(\Magento\Sales\Model\Order::STATE_CANCELED)->save();
+
+            $items = $order->getItemsCollection();
+            foreach ($items as $item) {
+                $item->setData('qty_canceled',$item->getQtyOrdered())->save();
+                // $item->setData('qty_invoiced',0)->save();
+                $item->setStatus(\Magento\Sales\Model\Order\Item::STATUS_CANCELED)->save();
+            }
+
+            //Start of comment about order cancel
+            $comment =  'Campainha recebida vinda do Yapay: Transaction ID '.$transactionId. ' - Status '.$statusName;
+            $history = $order->addStatusHistoryComment($comment);
+            $history->save();
+            //End of comment about order cancel
+
+            $this->_orderItems->save($items);
+
+            $this->orderRepository->save($order);
+
         }
 
         // if($order->getState() == 'canceled') {
@@ -239,17 +277,17 @@ class Capture extends Action implements CsrfAwareActionInterface
 
     }
 
-    private function addCancelDetails($comment, $order){
-		$status = $this->orderManagement->getStatus($order->getEntityId());
-		$history = $order->addStatusHistoryComment($comment, $status);
-	    $history->setIsVisibleOnFront(1);
-	    $history->setIsCustomerNotified(0);
-	    $history->save();
-	    $comment = trim(strip_tags($comment));
-	    $order->save();
-	    $this->_orderCommentSender->send($order, 1, $comment);
-	    return $this;
-	}
+    // private function addCancelDetails($comment, $order){
+	// 	$status = $this->orderManagement->getStatus($order->getEntityId());
+	// 	$history = $order->addStatusHistoryComment($comment, $status);
+	//     $history->setIsVisibleOnFront(1);
+	//     $history->setIsCustomerNotified(0);
+	//     $history->save();
+	//     $comment = trim(strip_tags($comment));
+	//     $order->save();
+	//     $this->_orderCommentSender->send($order, 1, $comment);
+	//     return $this;
+	// }
 
     public function getBaseURL()
     {

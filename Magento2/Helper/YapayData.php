@@ -286,26 +286,49 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         $payment["token_account"] = $this->getToken();
         $payment['customer'] = $this->generateCustomerData($paymentData);
         $payment["transaction_product"] = [];
-        $items = $this->_cart->getItems()->getData();
-        // $item = [];
+        // $items = $this->_cart->getItems()->getData();
+        $item = [];
+
+
+        // \Magento\Framework\App\ObjectManager::getInstance()
+        // ->get('Psr\Log\LoggerInterface')
+        // ->debug( $order["finger_print"]  );
+
+        // die();
+
+
+        $items = $order->getAllItems();
+
+        $i = 0;
+        foreach ($items as $key => $item) {
+          if ($item->getProductType() == 'simple') {
+            $payment['transaction_product'][$i]['description'] = $item->getName();
+            $payment['transaction_product'][$i]['quantity'] = $item->getQtyOrdered();
+            $payment['transaction_product'][$i]['price_unit'] = $item->getPrice();
+            $payment['transaction_product'][$i]['code'] = $item->getProductId();
+            $payment['transaction_product'][$i]['sku_code'] = $item->getSku();
+            $payment['transaction_product'][$i]['extra'] = "Pedido " . $order->getIncrementId();
+            $i++;
+          }
+        }
+
 
         //Filtra a var $items removendoo que é product_type => configurable
-        foreach($items as $key => $value){
-            $found = array_search('configurable',$value);
-            if($found != false AND $found == 'product_type'){
-                unset($items[$key]);
-            }
-        }
+        // foreach($items as $key => $value){
+        //     $found = array_search('configurable',$value);
+        //     if($found != false AND $found == 'product_type'){
+        //         unset($items[$key]);
+        //     }
+        // }
 
-        foreach ($items as $key => $item) {
-
-            $payment["transaction_product"][$key]["description"] = $item["name"];
-            $payment["transaction_product"][$key]["quantity"] = $item["qty"];
-            $payment["transaction_product"][$key]["price_unit"] = $item["price"];
-            $payment["transaction_product"][$key]["code"] = $item["product_id"];
-            $payment["transaction_product"][$key]["sku_code"] = $item["sku"];
-            $payment["transaction_product"][$key]["extra"] = $item["description"];
-        }
+        // foreach ($items as $key => $item) {
+        //     $payment["transaction_product"][$key]["description"] = $item["name"];
+        //     $payment["transaction_product"][$key]["quantity"] = $item["qty"];
+        //     $payment["transaction_product"][$key]["price_unit"] = $item["price"];
+        //     $payment["transaction_product"][$key]["code"] = $item["product_id"];
+        //     $payment["transaction_product"][$key]["sku_code"] = $item["sku"];
+        //     $payment["transaction_product"][$key]["extra"] = $item["description"];
+        // }
 
         $payment["transaction"] = [];
         $payment["transaction"]["customer_ip"] = $order["remote_ip"];
@@ -330,9 +353,16 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
 
         $paymentInfo = $paymentData->getData('additional_information');
 
-        // \Magento\Framework\App\ObjectManager::getInstance()
-        // ->get('Psr\Log\LoggerInterface')
-        // ->debug( $TotalOrder  );
+        $formaPagamento = $paymentData->getData('method') ;
+
+
+        if ( ($formaPagamento == 'yapay_bank_slip') OR ($formaPagamento == 'yapay_transference') ) {
+            $payment["transaction"]["available_payment_methods"] = '6, 7, 22, 23';
+            $payment["transaction"]["max_split_transaction"] = '1';
+        } else if ($formaPagamento == 'yapay_credit_card') {
+            $payment["transaction"]["available_payment_methods"] = '3, 4, 5, 15, 16, 18, 19, 20, 25, 6, 7, 22, 23';
+            $payment["transaction"]["max_split_transaction"] = $this->getMaxSplit();
+        }
 
         if ($paymentData->getData('method') == 'yapay_credit_card') {
             $parcelas = $this->getParcelas();
@@ -347,10 +377,8 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.2";
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.3";
         // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
-
-
 
         if ($paymentData->getData('method') == 'yapay_bank_slip') {
 
@@ -456,6 +484,28 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $token = $this->_scopeConfig->getValue('payment/yapay_configuration/token_configuration_yapay', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         return $token;
+    }
+
+    /**
+     * Busca número máximo de parcela
+     *
+     * @return mixed
+     */
+    public function getMaxSplit()
+    {
+        $maxsplit = $this->_scopeConfig->getValue('payment/yapay_credit_card/installments', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $maxsplit;
+    }
+
+    /**
+     * Busca número máximo de parcela
+     *
+     * @return mixed
+     */
+    public function getCCTypes()
+    {
+        $cctypes = $this->_scopeConfig->getValue('payment/yapay_credit_card/cctypes', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $cctypes;
     }
 
     /**

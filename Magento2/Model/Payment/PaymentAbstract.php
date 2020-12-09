@@ -96,7 +96,7 @@ abstract class PaymentAbstract extends \Magento\Payment\Model\Method\AbstractMet
     {
         return self::ACTION_AUTHORIZE_CAPTURE;
     }
-    
+
     public function order(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
         $this->_logger->debug(json_encode('oi order'));

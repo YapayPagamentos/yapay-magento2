@@ -36,7 +36,7 @@ define(
             }
 
             potentialTypes = creditCardTypes.getCardTypes(value);
-			
+
             if (potentialTypes.length === 0) {
                 return resultWrapper(null, false, false);
             } else if (potentialTypes.length !== 1) {

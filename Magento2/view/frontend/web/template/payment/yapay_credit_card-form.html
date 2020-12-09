@@ -1,4 +1,4 @@
-<fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'payment_form_' + getCode()}">
+<fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'payment_form_' + getCode()}" data-yapay="payment-form">
     <legend class="legend">
         <span><!-- ko i18n: 'Credit Card Information'--><!-- /ko --></span>
     </legend><br />
@@ -21,6 +21,7 @@
                 </li>
                 <!--/ko-->
             </ul>
+            <input type="hidden" name="finger_print" id="finger_print">
             <input type="hidden"
                    name="payment[cc_payment_id]"
                    class="input-text"
