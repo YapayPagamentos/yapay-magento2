@@ -364,20 +364,20 @@ class YapayData extends \Magento\Framework\App\Helper\AbstractHelper
             $payment["transaction"]["max_split_transaction"] = $this->getMaxSplit();
         }
 
-        if ($paymentData->getData('method') == 'yapay_credit_card') {
-            $parcelas = $this->getParcelas();
-            $parcelaCheckout = $paymentInfo["cc_installments"];
-            $TotalOrder = $order->getGrandTotal();
+        // if ($paymentData->getData('method') == 'yapay_credit_card') {
+        //     $parcelas = $this->getParcelas();
+        //     $parcelaCheckout = $paymentInfo["cc_installments"];
+        //     $TotalOrder = $order->getGrandTotal();
 
-            if ($parcelas[$parcelaCheckout] > "0.0") {
-                $totalJuros = ( floatval($TotalOrder) *  (floatval($parcelas[$parcelaCheckout]) / 100) );
+        //     if ($parcelas[$parcelaCheckout] > "0.0") {
+        //         $totalJuros = ( floatval($TotalOrder) *  (floatval($parcelas[$parcelaCheckout]) / 100) );
 
-                $payment["transaction"]["price_additional"] = $totalJuros;
-            }
-        }
+        //         $payment["transaction"]["price_additional"] = $totalJuros;
+        //     }
+        // }
 
         $payment["transaction"]["url_notification"] = $this->_getUrl('/').'yapay/notification/capture';
-        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.4";
+        $payment["transaction"]["free"] = "MAGENTO_2_API_v1.1.5";
         // $payment["transaction"]["free"] = "MAGENTO_2_API_v" . $this->getVersionModule();
 
         if ($paymentData->getData('method') == 'yapay_bank_slip') {

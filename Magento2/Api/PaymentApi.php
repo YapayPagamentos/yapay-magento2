@@ -79,4 +79,42 @@ class PaymentApi
 
         return $result;
     }
+
+    /**
+     * Simulação de Parcelamento   
+     * @return mixed
+     */
+    public function getSimulateSplitYapay($url_environment, $totalOrder)
+    {
+        $objectManager = ObjectManager::getInstance();
+        $helper = $objectManager->get(YapayData::class);
+        $token_account = $helper->getToken();
+
+        $simulateYapay["token_account"] = $token_account;
+        $simulateYapay["price"] = $totalOrder;
+        $simulateYapay["type_response"] = "J";
+
+
+        $data_string = json_encode($simulateYapay);
+       
+        $ch = curl_init($url_environment.'/api/v1/transactions/simulate_splitting');
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($data_string))
+        );
+        curl_setopt ( $ch, CURLOPT_POST, 1 );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode($simulateYapay));
+        curl_setopt ( $ch, CURLOPT_SSLVERSION, 6 );
+
+        $result = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        return json_decode($result);
+    }
+
+
+
+
 }

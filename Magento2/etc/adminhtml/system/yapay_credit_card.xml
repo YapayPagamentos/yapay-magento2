@@ -35,7 +35,19 @@
             </depends>
             <!-- <source_model>Yapay\Magento2\Model\System\Config\ValorMinimoParc</source_model> -->
         </field>
+        
+        <field id="parcelamentoYapay" translate="label" type="hidden" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Parcelamento configurado na Yapay</label>
+            <comment>A configuração de parcelamento é feita na Yapay</comment>
+            <source_model>Yapay\Magento2\Model\System\Config\SimulateSplitYapay</source_model>
 
+            <depends>
+                <field id="active">1</field>
+            </depends>
+            <!-- <source_model>Yapay\Magento2\Model\System\Config\ValorMinimoParc</source_model> -->
+        </field>        
+<!-- 
+        Apenas comentado, caso alguem utilize apagar o comentário
         <field id="parcel_interest_1" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Juros por parcela 1</label>
             <tooltip>Certifique-se de que o juros informado seja o mesmo do Yapay</tooltip>
@@ -143,7 +155,7 @@
                 <field id="active">1</field>
             </depends>
             <validate>required-entry validate-number</validate>
-        </field>
+        </field> -->
     </group>
 </include>
 

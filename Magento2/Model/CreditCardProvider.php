@@ -6,6 +6,8 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\View\Asset\Source;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Payment\Model\CcConfig;
+use Yapay\Magento2\Model\System\Config\SimulateSplitYapay;
+
 
 /**
  * Class CreditCardProvider
@@ -13,6 +15,11 @@ use Magento\Payment\Model\CcConfig;
  */
 class CreditCardProvider implements ConfigProviderInterface
 {
+
+    /**
+     * @var SimulateSplitYapay
+     */
+    protected $SimulateSplitYapay;
 
 
     /**
@@ -31,6 +38,7 @@ class CreditCardProvider implements ConfigProviderInterface
     private $icons = [];
 
 
+
     /**
      * CreditCardProvider constructor.
      * @param CcConfig $ccConfig
@@ -39,15 +47,19 @@ class CreditCardProvider implements ConfigProviderInterface
      * @param \Magento\Framework\Model\Context $context
      */
     public function __construct(
+        SimulateSplitYapay $SimulateSplitYapay,
         CcConfig $ccConfig,
         Source $assetSource,
         ScopeConfigInterface $scopeConfig,
-        \Magento\Framework\Model\Context $context
+        \Magento\Framework\Model\Context $context,
+        SimulateSplitYapay $SimulateSplitYapayy
     ) {
         $this->ccConfig = $ccConfig;
         $this->assetSource = $assetSource;
         $this->scopeConfig = $scopeConfig;
-        $this->_logger = $context->getLogger();;
+        $this->_logger = $context->getLogger();
+        $this->SimulateSplitYapayy = $SimulateSplitYapay;
+        
     }
 
     /**
@@ -73,7 +85,8 @@ class CreditCardProvider implements ConfigProviderInterface
                     'valor_minimo' => $this->valorMinimoParcela(),
                     'cctypes' => $this->CcType(),
                     'icons' => $this->getIcons(),
-                    'interestInstallments' => $this->interestInstallments()
+                    'interestInstallments' => $this->interestInstallments(),
+                    
 
                 ]
             ]
@@ -135,7 +148,6 @@ class CreditCardProvider implements ConfigProviderInterface
             $arrayJson[] = json_decode($string_types_quebrada[$key]);
         }
 
-
         $codes = [];
         $item = [];
         foreach ($arrayJson as $key => $value ) {
@@ -168,9 +180,9 @@ class CreditCardProvider implements ConfigProviderInterface
     public function interestInstallments()
     {
         $installmentsInterest = [];
-
+        // para não apagar, setei 0.00
         for($i=1; $i <= $this->Installment(); $i++) {
-            array_push($installmentsInterest, $this->scopeConfig->getValue('payment/yapay_credit_card/parcel_interest_'.$i ));
+            array_push($installmentsInterest, "0.00");
         };
 
         return $installmentsInterest;
@@ -185,6 +197,41 @@ class CreditCardProvider implements ConfigProviderInterface
     {
         return $this->scopeConfig->getValue('payment/yapay_credit_card/valor_minimo');
     }
+
+
+    
+    /**
+     * Busca API Simulação Parcelamento
+     *
+     * @return array
+     */
+    // public function getSplitYapay()
+    // {
+
+    //    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    //    $cart = $objectManager->get('\Magento\Checkout\Model\Cart');
+    //    $totalOrder = $cart->getQuote()->getData('grand_total');
+    //    $shipAmount = $cart->getQuote()->getShippingAddress()->getShippingAmount();
+    // //    $amount = $totalOrder + $shipAmount;
+
+    //     $simulateSpit = json_encode($this->SimulateSplitYapayy->getSplitYapay(number_format((float)$totalOrder, 2, '.','')));
+
+        
+    //         \Magento\Framework\App\ObjectManager::getInstance()
+    //         ->get('Psr\Log\LoggerInterface')
+    //         ->debug($shipAmount);
+
+    //         \Magento\Framework\App\ObjectManager::getInstance()
+    //         ->get('Psr\Log\LoggerInterface')
+    //         ->debug($totalOrder);
+
+                  
+        
+
+    //     // die();
+    //     return $simulateSpit;
+    // }
+
 
 //    /**
 //     * Calcula os juros de cada parcela

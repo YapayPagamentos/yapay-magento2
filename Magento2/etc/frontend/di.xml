@@ -17,4 +17,15 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="confignew" xsi:type="object">Yapay\Magento2\Plugin\Magento\Checkout\Model\ShippingInformationManagement</item>
+            </argument>
+        </arguments>
+    </type> -->
+    <!--Responsavel por sobrepor implementacões do magento pelas desenvolvidas pelo nosso modulo-->
+    <type name="Magento\Checkout\Model\ShippingInformationManagement">
+        <plugin name="Yapay_Magento2_Plugin_Magento_Checkout_Model_ShippingInformationManagement" type="Yapay\Magento2\Plugin\Magento\Checkout\Model\ShippingInformationManagement" sortOrder="1"/>
+    </type>
 </config>

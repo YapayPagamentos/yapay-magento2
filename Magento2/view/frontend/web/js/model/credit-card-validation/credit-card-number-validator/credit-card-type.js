@@ -8,18 +8,18 @@ define(
     function ($, utils) {
         'use strict';
         var types = [
-			{
-                title: 'Discover',
-                type: 'discover',
-                payment_id: '15',
-                pattern: '^6(?:011|5[0-9]{2})[0-9]{12}$',
-                gaps: [4, 8, 12],
-                lengths: [16],
-                code: {
-                    name: 'CID',
-                    size: 3
-                }
-            },
+			// {
+            //     title: 'Discover',
+            //     type: 'discover',
+            //     payment_id: '15',
+            //     pattern: '^6(?:011|5[0-9]{2})[0-9]{12}$',
+            //     gaps: [4, 8, 12],
+            //     lengths: [16],
+            //     code: {
+            //         name: 'CID',
+            //         size: 3
+            //     }
+            // },
             {
                 title: 'Visa',
                 type: 'visa',
@@ -81,18 +81,18 @@ define(
                     size: 3
                 }
             },
-            {
-                title: 'Aura',
-                type: 'aura',
-                payment_id: '18',
-                pattern: '^50[0-9]{14,17}$',
-                gaps: [4, 8, 12],
-                lengths: [12, 13, 14, 15, 16, 17, 18, 19],
-                code: {
-                    name: 'CVV',
-                    size: 3
-                }
-            },
+            // {
+            //     title: 'Aura',
+            //     type: 'aura',
+            //     payment_id: '18',
+            //     pattern: '^50[0-9]{14,17}$',
+            //     gaps: [4, 8, 12],
+            //     lengths: [12, 13, 14, 15, 16, 17, 18, 19],
+            //     code: {
+            //         name: 'CVV',
+            //         size: 3
+            //     }
+            // },
             {
                 title: 'Elo',
                 type: 'elo',
@@ -117,18 +117,18 @@ define(
                     size: 3
                 }
             },
-            {
-                title: 'JCB',
-                type: 'jcb',
-                payment_id: '19',
-                pattern: '^(3(?:088|096|112|158|337|5(?:2[89]|[3-8][0-9]))\\d{12})$',
-                gaps: [4, 8, 12],
-                lengths: [12, 13, 14, 15, 16, 17, 18, 19],
-                code: {
-                    name: 'CVV',
-                    size: 3
-                }
-            }
+            // {
+            //     title: 'JCB',
+            //     type: 'jcb',
+            //     payment_id: '19',
+            //     pattern: '^(3(?:088|096|112|158|337|5(?:2[89]|[3-8][0-9]))\\d{12})$',
+            //     gaps: [4, 8, 12],
+            //     lengths: [12, 13, 14, 15, 16, 17, 18, 19],
+            //     code: {
+            //         name: 'CVV',
+            //         size: 3
+            //     }
+            // }
 
         ];
         return {
