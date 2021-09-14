@@ -1,6 +1,0 @@
-<?xml version="1.0" ?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-	<event name="sales_order_shipment_save_after">
-		<observer name="yapay_magento2_observer_checkout_controlleronepagesaveshippingmethod_checkout_controller_onepage_save_shipping_method" instance="Yapay\Magento2\Observer\Checkout\ControllerOnepageSaveShippingMethod"/>
-	</event>
-</config>
