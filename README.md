@@ -1,6 +1,6 @@
 # Deprecated
 
-Código descontinuado, favor acessar: https://github.com/vindi/vindi-magento2-payments
+Código descontinuado, favor acessar: https://github.com/vindi/magento2-payments
 
 # Magento Extension for [Yapay Intermediador de Pagamentos](https://www.yapay.com.br/) 
 
